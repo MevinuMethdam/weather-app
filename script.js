@@ -1,6 +1,3 @@
-
-
-
 // API Key
 const apiKey = "dc4704bff273db7a02a4fd9370db7acf";
 
