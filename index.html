@@ -1,32 +1,42 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Dashboard</title>
+    <title>Weather Dashboard Pro</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <div id="dynamicBg" class="dynamic-bg"></div>
 
+  <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="spinner"></div>
+  </div>
+
+  <div id="toastBox" class="toast-box"></div>
+
   <div class="dashboard-container app-shell">
     <header class="dashboard-header glass">
       <div class="left-row">
         <div class="search-box glass-input">
-          <input type="text" id="cityInput" placeholder="🔍 Search for location...">
-          <button id="searchBtn" class="glass-btn">Search</button>
+          <span class="material-icons search-icon">search</span>
+          <input type="text" id="cityInput" placeholder="Search city..." autocomplete="off">
+          <button id="searchBtn" class="glass-btn">Go</button>
         </div>
       </div>
       <div class="center-row">
-        <h2 id="headerCityName" class="city-title">Kothalawala</h2>
-        <p id="localTime" class="local-time">--:--</p>
+        <h2 id="headerCityName" class="city-title">--</h2>
+        <div class="time-badge">
+            <span class="material-icons">schedule</span>
+            <p id="localTime" class="local-time">--:--</p>
+        </div>
       </div>
       <div class="right-row">
         <div id="themeBadge" class="theme-badge" data-theme="Day">
           <span class="material-icons theme-icon">light_mode</span>
-          <span class="theme-text">Day Mode</span>
+          <span class="theme-text">Day</span>
         </div>
       </div>
     </header>
@@ -35,77 +45,78 @@
       <section class="panel current-weather-panel glass">
         <div class="weather-info" id="weatherInfo">
           <div class="weather-icon-wrap">
-            <img src="" id="weatherIcon" class="weather-icon" alt="icon" style="display:none;" />
+            <img src="" id="weatherIcon" class="weather-icon" alt="Weather Icon" style="display:none;" />
             <div class="icon-glow"></div>
           </div>
           <div class="temp-details">
             <h1 id="temperature" class="main-temp">--°C</h1>
-            <p id="description" class="desc-text">--</p>
-            <p id="feelsLike" class="feels-like">Feels like: --°C</p>
+            <p id="description" class="desc-text">Start by searching a city</p>
+            <div class="feels-chip">
+                <span class="material-icons">thermostat</span>
+                <span id="feelsLike">Feels like: --°C</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="panel forecast-panel glass">
-        <h3 class="section-title">Weather Details</h3>
+        <h3 class="section-title">Current Details</h3>
 
         <div class="details-grid">
-          <div class="detail-item humidity-box">
+          <div class="detail-item">
             <p class="detail-title">Humidity</p>
             <div class="humidity-visual">
-              <svg class="humidity-ring" viewBox="0 0 120 120" width="110" height="110">
-                <defs>
-                  <linearGradient id="humGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#4dd2ff"/>
-                    <stop offset="100%" stop-color="#6be6b5"/>
-                  </linearGradient>
-                </defs>
-                <circle class="ring-bg" cx="60" cy="60" r="48" />
-                <circle id="humRing" class="ring-progress" cx="60" cy="60" r="48" stroke="url(#humGrad)"/>
-                <text id="humidity" class="ring-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">--%</text>
+              <svg class="humidity-ring" viewBox="0 0 120 120" width="80" height="80">
+                <circle class="ring-bg" cx="60" cy="60" r="52" />
+                <circle id="humRing" class="ring-progress" cx="60" cy="60" r="52" />
+                <text id="humidity" class="ring-text" x="50%" y="50%" text-anchor="middle" dy=".3em">--%</text>
               </svg>
             </div>
           </div>
-          <div class="detail-item wind-box">
+
+          <div class="detail-item">
             <p class="detail-title">Wind</p>
-            <p id="windSpeed" class="detail-value">-- km/h</p>
-            <div class="wind-direction">
-              <div id="wind-arrow" class="wind-arrow">↑</div>
-              <p id="wind-direction-text">N</p>
+            <div class="detail-content">
+                <div class="wind-direction">
+                    <div id="wind-arrow" class="wind-arrow">↑</div>
+                </div>
+                <p id="windSpeed" class="detail-value">-- km/h</p>
+                <p id="wind-direction-text" class="sub-text">--</p>
             </div>
           </div>
-          <div class="detail-item aqi-box">
+
+          <div class="detail-item">
             <p class="detail-title">Air Quality</p>
-            <div id="aqi-icon" class="detail-icon"></div>
-            <p id="aqi" class="detail-value">--</p>
+            <div id="aqi-icon" class="mini-icon"></div>
+            <p id="aqi" class="detail-value-sm">--</p>
           </div>
           
-          <div class="detail-item sunrise-box">
+          <div class="detail-item">
             <p class="detail-title">Sunrise</p>
-            <div id="sunrise-icon" class="detail-icon"></div>
+            <div id="sunrise-icon" class="mini-icon"></div>
             <p id="sunrise" class="detail-value">--:--</p>
           </div>
           
-          <div class="detail-item sunset-box">
+          <div class="detail-item">
             <p class="detail-title">Sunset</p>
-            <div id="sunset-icon" class="detail-icon"></div>
+            <div id="sunset-icon" class="mini-icon"></div>
             <p id="sunset" class="detail-value">--:--</p>
           </div>
           
-          <div class="detail-item pressure-box">
+          <div class="detail-item">
             <p class="detail-title">Pressure</p>
-            <div id="pressure-icon" class="detail-icon"></div>
+            <div id="pressure-icon" class="mini-icon"></div>
             <p id="pressure" class="detail-value">-- hPa</p>
           </div>
 
         </div>
 
-        <h3 class="section-title">Hourly Forecast</h3>
+        <h3 class="section-title mt-4">Hourly Forecast</h3>
         <div class="hourly-container">
           <div class="hourly-items" id="hourlyItems"></div>
         </div>
 
-        <h3 class="section-title">5-Day Forecast</h3>
+        <h3 class="section-title mt-4">5-Day Forecast</h3>
         <div class="forecast-container">
           <div class="forecast-items" id="forecastItems"></div>
         </div>
